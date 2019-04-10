@@ -41,22 +41,14 @@ def startMenu():
     Menu.maximo = 3
     Menu.sair = 0
     Menu.escolha = 1
+    clearcolors()
     while True:
         if Menu.sair == 1:
             Menu.load = "1." + str(Menu.escolha)
             break
-        if Menu.escolha == 1:
-            label1 = M5TextBox(25, 46, "New Game", lcd.FONT_Default, 0x0007fd)
-            label2 = M5TextBox(25, 66, "Load Game", lcd.FONT_Default, 0xFFFFFF)
-            label3 = M5TextBox(25, 86, "Quit", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 2:
-            label1 = M5TextBox(25, 46, "New Game", lcd.FONT_Default, 0xFFFFFF)
-            label2 = M5TextBox(25, 66, "Load Game", lcd.FONT_Default, 0x0007fd)
-            label3 = M5TextBox(25, 86, "Quit", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 3:
-            label1 = M5TextBox(25, 46, "New Game", lcd.FONT_Default, 0xFFFFFF)
-            label2 = M5TextBox(25, 66, "Load Game", lcd.FONT_Default, 0xFFFFFF)
-            label3 = M5TextBox(25, 86, "Quit", lcd.FONT_Default, 0x0007fd)
+        label1 = M5TextBox(25, 46, "New Game", lcd.FONT_Default, color[1])
+        label2 = M5TextBox(25, 66, "Load Game", lcd.FONT_Default, color[2])
+        label3 = M5TextBox(25, 86, "Quit", lcd.FONT_Default, color[3])
         escolher()
     
 def escolher():
@@ -126,35 +118,12 @@ def novoJogo():
             if Menu.escolha == 5:
                 endturncalculations()
             break
-            M5TextBox(25, 106, "Country Data", lcd.FONT_Default, 0x0007fd)
-            M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 146, "Military", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 166, "Health", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 186, "End Turn", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 2:
-            M5TextBox(25, 106, "Country Data", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, 0x0007fd)
-            M5TextBox(25, 146, "Military", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 166, "Health", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 186, "End Turn", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 3:
-            M5TextBox(25, 106, "Country Data", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 146, "Military", lcd.FONT_Default, 0x0007fd)
-            M5TextBox(25, 166, "Health", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 186, "End Turn", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 4:
-            M5TextBox(25, 106, "Country Data", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 146, "Military", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 166, "Health", lcd.FONT_Default, 0x0007fd)
-            M5TextBox(25, 186, "End Turn", lcd.FONT_Default, 0xFFFFFF)
-        if Menu.escolha == 5:
-            M5TextBox(25, 106, "Country Data", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 146, "Military", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 166, "Health", lcd.FONT_Default, 0xFFFFFF)
-            M5TextBox(25, 186, "End Turn", lcd.FONT_Default, 0x0007fd)
+
+        M5TextBox(25, 106, "Country Data", lcd.FONT_Default, color[1])
+        M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, color[2])
+        M5TextBox(25, 146, "Military", lcd.FONT_Default, color[3])
+        M5TextBox(25, 166, "Health", lcd.FONT_Default, color[4])
+        M5TextBox(25, 186, "End Turn", lcd.FONT_Default, color[5])
         escolher()
 
 def endturncalculations():
