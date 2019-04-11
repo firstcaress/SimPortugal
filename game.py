@@ -1,11 +1,41 @@
 from m5stack import *
 from m5ui import *
 import time
+import os
+import random
+
+
+#try:
+#  print(os.stat("/flash/lib/SimPor.sav"))
+#except:
+#  print("no file")
+
+
+global identifier
+identifier = random.randint(1,1000000000)
+
+
+try:
+    print(os.stat("/flash/lib/SimPor.sav"))
+    f = open("/flash/lib/SimPor.sav", "r")
+    print (f.read())
+    f.close()
+except:
+    f = open("/flash/lib/SimPor.sav", "w")
+    f.write(str(identifier)+",0")
+    f.close()
+    print("oi")
+
+
+
+
 escolha = 1
 global turn
 turn = 10
 global color
-color = [0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF]
+global version
+version = 0.22
+color = [0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF]
          
 class Pais(object):
     def __init__(self, populacao, money, militar, natalidade,felicidade,saude):
@@ -15,11 +45,13 @@ class Pais(object):
         self.natalidade = 1.01
         self.felicidade = 50
         self.saude = 70
+        
 portugal = Pais(1000,250000,90,10,50,70)
 andorra = Pais(10,10000,20,10,50,70)
 espanha = Pais(9000,290000,500,10,50,70)
 franca = Pais(15000,500000,1000,10,50,70)
-        
+
+
 class militares(object):
     def __init__(self,gastos,contentamento,poder):
         self.gastos = 0
@@ -38,16 +70,22 @@ class Menu(object):
 
         
 def startMenu():
+    clear_bg(0x222222)
+    title1 = M5Title(title="Welcome to SimPortugal v"+str(version) , fgcolor=0xFFFFFF, bgcolor=0x0000FF)
+    menuMode = M5TextBox(135, 213, "Select", lcd.FONT_Default, 0xfffc00)
+    menuMinus = M5TextBox(52, 213, "Previous", lcd.FONT_Default, 0x00ff3b)
+    menuPlus = M5TextBox(237, 213, "Next", lcd.FONT_Default, 0xff0000)
     Menu.maximo = 3
     Menu.sair = 0
     Menu.escolha = 1
     clearcolors()
+    color[1]=0x0007fd
     while True:
         if Menu.sair == 1:
             Menu.load = "1." + str(Menu.escolha)
             break
         label1 = M5TextBox(25, 46, "New Game", lcd.FONT_Default, color[1])
-        label2 = M5TextBox(25, 66, "Load Game", lcd.FONT_Default, color[2])
+        label2 = M5TextBox(25, 66, "Continue Game", lcd.FONT_Default, color[2])
         label3 = M5TextBox(25, 86, "Quit", lcd.FONT_Default, color[3])
         escolher()
     
@@ -58,12 +96,7 @@ def escolher():
          Menu.escolha = (Menu.escolha - 1)
          if Menu.escolha == 0:
            Menu.escolha = Menu.maximo
-         color[0]=0xFFFFFF
-         color[1]=0xFFFFFF
-         color[2]=0xFFFFFF
-         color[3]=0xFFFFFF
-         color[4]=0xFFFFFF
-         color[5]=0xFFFFFF
+         clearcolors()
          color[Menu.escolha]=0x0007fd
          time.sleep(0.2)
          return()
@@ -71,12 +104,7 @@ def escolher():
          Menu.escolha = (Menu.escolha + 1)
          if Menu.escolha == (Menu.maximo + 1):
            Menu.escolha = 1
-         color[0]=0xFFFFFF
-         color[1]=0xFFFFFF
-         color[2]=0xFFFFFF
-         color[3]=0xFFFFFF
-         color[4]=0xFFFFFF
-         color[5]=0xFFFFFF
+         clearcolors()
          color[Menu.escolha]=0x0007fd
          time.sleep(0.2)
          return()
@@ -87,43 +115,48 @@ def escolher():
          
 def clearcolors():
     global color
-    color[1]=0x0007fd
+    color[1]=0xFFFFFF
     color[2]=0xFFFFFF
     color[3]=0xFFFFFF
     color[4]=0xFFFFFF
     color[5]=0xFFFFFF
     color[6]=0xFFFFFF
     color[7]=0xFFFFFF    
-
+    color[8]=0xFFFFFF
+    color[9]=0xFFFFFF    
 
 def novoJogo():
     global turn
     
     clear_bg(0x222222)
     title1 = M5Title(title="SimPortugal v0.14", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-    Menu.maximo = 5
+    Menu.maximo = 8
     Menu.sair = 0
     Menu.escolha = 1
-    M5TextBox(160, 46, "Turns Until Election", lcd.FONT_Default, 0xFFFFFF)
-    M5TextBox(240, 66, str(turn), lcd.FONT_Default, 0xFFFFFF)
+    M5TextBox(25, 26, "Turns Until Election :", lcd.FONT_Default, 0xec0000)
+    M5TextBox(180, 26, str(turn), lcd.FONT_Default, 0xFFFFFF)
     M5TextBox(135, 213, "Select", lcd.FONT_Default, 0xfffc00)
     M5TextBox(52, 213, "Previous", lcd.FONT_Default, 0x00ff3b)
     M5TextBox(237, 213, "Next", lcd.FONT_Default, 0xff0000)
     clearcolors()
+    color[1]=0x0007fd
     while True:
         print (Menu.escolha)
         print (Menu.sair)
         if Menu.sair == 1:
             Menu.load = "2." + str(Menu.escolha)
-            if Menu.escolha == 5:
+            if Menu.escolha == 6:
                 endturncalculations()
             break
 
-        M5TextBox(25, 106, "Country Data", lcd.FONT_Default, color[1])
-        M5TextBox(25, 126, "Player Profile", lcd.FONT_Default, color[2])
-        M5TextBox(25, 146, "Military", lcd.FONT_Default, color[3])
-        M5TextBox(25, 166, "Health", lcd.FONT_Default, color[4])
-        M5TextBox(25, 186, "End Turn", lcd.FONT_Default, color[5])
+        M5TextBox(25, 70, "Country Data", lcd.FONT_Default, color[1])
+        M5TextBox(25, 90, "Player Profile", lcd.FONT_Default, color[2])
+        M5TextBox(25, 110, "Education", lcd.FONT_Default, color[3])
+        M5TextBox(25, 130, "Military", lcd.FONT_Default, color[4])
+        M5TextBox(25, 150, "Health", lcd.FONT_Default, color[5])
+        M5TextBox(25, 170, "End Turn", lcd.FONT_Default, color[6])
+        M5TextBox(25, 190, "Save & Quit", lcd.FONT_Default, color[7])
+        M5TextBox(160, 70, "Other Options", lcd.FONT_Default, color[8])
         escolher()
 
 def endturncalculations():
@@ -164,9 +197,18 @@ def endturncalculations():
 
 
 def loadJogo():
-    clear_bg(0x222222)
-    title1 = M5Title(title="Welcome to SimPortugal v0.14", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd)   
+  global Menu
+  try:
+    print(os.stat("/flash/lib/SimPor.sav"))
+  except:
+    print("no file")
+    Menu.sair = 0
+    M5TextBox(155, 66, "*NO SAVE DETECTED*", lcd.FONT_Default, 0xfffc00)
+    time.sleep(0.5)
+    Menu.load = "0.0"
+   
+  
+  
 
 def loadProfile():
     clear_bg(0x222222)
@@ -189,6 +231,7 @@ def loadMilitary():
     M5TextBox(52, 213, "Previous", lcd.FONT_Default, 0x00ff3b)
     M5TextBox(237, 213, "Next", lcd.FONT_Default, 0xff0000)
     clearcolors()
+    color[1]=0x0007fd
     while True:
         
         if Menu.sair == 1 and Menu.escolha == 1:
@@ -214,10 +257,17 @@ def loadMilitary():
         label4 = M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
         escolher() 
     
-def loadJogo():
+def loadHealth():
     clear_bg(0x222222)
     title1 = M5Title(title="Health", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd)    
+    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd) 
+    time.sleep(2)
+
+def loadEducation():
+    clear_bg(0x222222)
+    title1 = M5Title(title="Education", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
+    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd)  
+    time.sleep(2)
 
 def invadirPais():
     clear_bg(0x222222)
@@ -227,8 +277,10 @@ def invadirPais():
     
 def quitJogo():
     clear_bg(0x222222)
-    M5Title(title="Welcome to SimPortugal v0.14", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
+    M5Title(title="Welcome to SimPortugal v"+str(version), fgcolor=0xFFFFFF, bgcolor=0x0000FF)
     M5TextBox(25, 46, "OH :( Goodby then!", lcd.FONT_Default, 0x0007fd)
+    time.sleep(2)
+    machine.reset()
  
 def loadCountryData():
     clear_bg(0x222222)
@@ -254,21 +306,20 @@ clear_bg(0x222222)
 btnA = M5Button(name="ButtonA", text="ButtonA", visibility=False)
 btnB = M5Button(name="ButtonB", text="ButtonB", visibility=False)
 btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
-title1 = M5Title(title="Welcome to SimPortugal v0.14", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-menuMode = M5TextBox(135, 213, "Select", lcd.FONT_Default, 0xfffc00)
-menuMinus = M5TextBox(52, 213, "Previous", lcd.FONT_Default, 0x00ff3b)
-menuPlus = M5TextBox(237, 213, "Next", lcd.FONT_Default, 0xff0000)
 
 
-f = open('/flash/apps/save.txt', 'w')
-f.write('teste')
-f.close()
+def loadSave():
+    f = open('/flash/lib/SimPor.sav', 'w')
+    f.write(portugal())
+    f.close()
 
 
 
 
 startMenu()
 while True:
+    if Menu.load == "0.0":
+        startMenu()
     if Menu.load == "1.1":
         novoJogo()
     if Menu.load == "1.2":
@@ -280,16 +331,19 @@ while True:
     if Menu.load == "2.2":
         loadProfile()
     if Menu.load == "2.3":
-        loadMilitary()
+        loadEducation()
     if Menu.load == "2.4":
+        loadMilitary()
+    if Menu.load == "2.5":
         loadHealth()
+    if Menu.load == "2.7":
+        loadSave()
     if Menu.load == "3.3":
         invadirPais()
-    if Menu.load == "2.5":
+    if Menu.load == "2.6":
         novoJogo()
     if Menu.load == "3.4":
         novoJogo()
-
 
 
 
