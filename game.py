@@ -5,7 +5,7 @@ import os
 import random
 import ujson
 
-
+global gravado
 global identifier
 identifier = random.randint(1,1000000000)
 
@@ -15,21 +15,28 @@ identifier = random.randint(1,1000000000)
 #teste.write(json)
 #teste.close()
 #print(dados)
-
-with open('/flash/lib/Teste.sav') as json_file:  
-    data = ujson.load(json_file)
-    print (data["jorge"])
-
 try:
-    print(os.stat("/flash/lib/SimPor.sav"))
-    f = open("/flash/lib/SimPor.sav", "r")
-    print (f.read())
-    f.close()
+    with open("/flash/lib/SimPor.sav","r") as json_file:  
+        data = ujson.load(json_file)
+        identifier = data["identifier"]
 except:
     f = open("/flash/lib/SimPor.sav", "w")
-    f.write(str(identifier)+",0")
+    dados = {"identifier" : identifier}
+    json = ujson.dumps(dados)
+    f.write(json)
     f.close()
-    print("oi")
+
+print (identifier)
+#try:
+#    print(os.stat("/flash/lib/SimPor.sav"))
+#    f = open("/flash/lib/SimPor.sav", "r")
+#    print (f.read())
+#    f.close()
+#except:
+#    f = open("/flash/lib/SimPor.sav", "w")
+#    f.write(str(identifier)+",0")
+#    f.close()
+#    print("oi")
 
 
 
@@ -204,9 +211,10 @@ def endturncalculations():
 def loadJogo():
   global Menu
   try:
-    print(os.stat("/flash/lib/SimPor.sav"))
+    with open("/flash/lib/SimPor.sav","r") as json_file:  
+        data = ujson.load(json_file)
+        gravado = data["gravado"]
   except:
-    print("no file")
     Menu.sair = 0
     M5TextBox(155, 66, "*NO SAVE DETECTED*", lcd.FONT_Default, 0xfffc00)
     time.sleep(0.5)
