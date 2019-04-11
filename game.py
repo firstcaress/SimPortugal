@@ -3,17 +3,22 @@ from m5ui import *
 import time
 import os
 import random
-
-
-#try:
-#  print(os.stat("/flash/lib/SimPor.sav"))
-#except:
-#  print("no file")
+import ujson
 
 
 global identifier
 identifier = random.randint(1,1000000000)
 
+#dados = {"jorge" : "12", "isabel" : "15"}
+#teste = open("/flash/lib/Teste.sav", "r")
+#json = ujson.dumps(dados)
+#teste.write(json)
+#teste.close()
+#print(dados)
+
+with open('/flash/lib/Teste.sav') as json_file:  
+    data = ujson.load(json_file)
+    print (data["jorge"])
 
 try:
     print(os.stat("/flash/lib/SimPor.sav"))
