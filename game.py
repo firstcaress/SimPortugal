@@ -289,7 +289,9 @@ def downloadCloud():
     'Content-Type': 'application/json',
     'X-MyHeader': '123',}
       response = urequests.post('https://us-central1-plucky-agency-235912.cloudfunctions.net/function-1', headers=headers, data=json)
-      print (response.text)
+      print(response)
+      print(response.text)
+      print(response.json())
       response.close
       M5TextBox(155, 90, "*LOADED FROM CLOUD*", lcd.FONT_Default, 0xfffc00)
       time.sleep(2)
