@@ -264,15 +264,37 @@ def uploadCloud():
       global militares
       global identifier
       global turn
-      dados = identifier +',mytag=1 freq=42'
-      response = urequests.post('http://mantorrasgoogle.duckdns.org:8086/write?db=simpor&u=save&p=amadablan', data=dados)
+      dados = {"identifier" : identifier, "gravado" : 1, "voltas" : turn, "saving":"1"}
+      dados.update(portugal.__dict__)
+      dados.update(militares.__dict__)
+      json = ujson.dumps(dados)
+      headers = {
+    'Content-Type': 'application/json',
+    'X-MyHeader': '123',}
+      response = urequests.post('https://us-central1-plucky-agency-235912.cloudfunctions.net/function-1', headers=headers, data=json)
       response.close()
       M5TextBox(155, 70, "*UPLOADED TO CLOUD*", lcd.FONT_Default, 0xfffc00)
       time.sleep(2)
       Menu.load = "1.1"
 
-
-
+def downloadCloud():
+      global Menu
+      global portugal
+      global militares
+      global identifier
+      global turn
+      dados = {"saving":"0"}
+      json = ujson.dumps(dados)
+      headers = {
+    'Content-Type': 'application/json',
+    'X-MyHeader': '123',}
+      response = urequests.post('https://us-central1-plucky-agency-235912.cloudfunctions.net/function-1', headers=headers, data=json)
+      print (response.text)
+      response.close
+      M5TextBox(155, 90, "*LOADED FROM CLOUD*", lcd.FONT_Default, 0xfffc00)
+      time.sleep(2)
+      Menu.load = "1.1"
+      
 def loadOnline():
     
     try:
