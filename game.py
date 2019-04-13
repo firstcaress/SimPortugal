@@ -2,37 +2,48 @@ from m5stack import *
 from m5ui import *
 import time
 import os
-import ujson
 import urequests
+import gc
+import ujson
+import random
+
 global gravado
 global identifier
 identifier = (machine.unique_id())
 identifier = str(identifier)
-identifier = identifier.replace("\\","")
-
-
+identifier = identifier.replace("[^\w]","")
+validLetters = "abcdefghijklmnopqrstuvwxyz0123456789"
+identifier = ''.join([char for char in identifier if char in validLetters])
 
 escolha = 1
 global turn
 turn = 10
 global color
 global version
-version = 0.27
+
+version = 0.31
 color = [0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF]
          
 class Pais(object):
-    def __init__(self, populacao, money, militar, natalidade,felicidade,saude):
+    def __init__(self, posicao, populacao, money, militar, natalidade,felicidade,saude, nome,destruido):
+        self.posicao = posicao
         self.populacao = populacao
         self.money = money
         self.militar = militar
         self.natalidade = natalidade
         self.felicidade = felicidade
         self.saude = saude
-        
-portugal = Pais(1000,250000,90,10,50,70)
-andorra = Pais(10,10000,20,10,50,70)
-espanha = Pais(9000,290000,500,10,50,70)
-franca = Pais(15000,500000,1000,10,50,70)
+        self.nome = nome
+        self.destruido = destruido
+
+
+portugal = Pais(0,1000,250000,90,10,50,70, "Portugal",1)
+andorra = Pais(1,10,10000,20,10,50,70, "Andorra",0)
+espanha = Pais(2,9000,290000,500,10,50,70, "Spain",0)
+franca = Pais(3,15000,500000,1000,10,50,70, "France",0)
+missanga = Pais(4,150000,500000,5000,10,50,70, "MissangaLand",0)
+
+country_list = [portugal,andorra,espanha,franca,missanga]
 
 class militarianos(object):
     def __init__(self,gastos,contentamento,poder):
@@ -112,7 +123,7 @@ def novoJogo():
     global turn
     
     clear_bg(0x222222)
-    title1 = M5Title(title="SimPortugal v0.14", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
+    title1 = M5Title(title="SimPortugal v"+str(version), fgcolor=0xFFFFFF, bgcolor=0x0000FF)
     Menu.maximo = 8
     Menu.sair = 0
     Menu.escolha = 1
@@ -192,8 +203,8 @@ def loadJogo():
         if gravado == 1:
             turn = data["voltas"]
             print (data["gastos"])
-            portugal=(Pais(data["populacao"], data["money"], data["militar"], data["natalidade"],data["felicidade"],data["saude"]))
-            militares = militarianos(data["gastos"],data["contentamento"],data["poder"])
+            portugal=(Pais(data["posicao"], data["populacao"], data["money"], data["militar"], data["natalidade"],data["felicidade"],data["saude"]))
+            militares = militarianos(data["gastos"],data["contentamento"],data["poder"], data["nome"])
             Menu.load = "1.1"
             Menu.sair = 0
             return()
@@ -252,10 +263,10 @@ def loadMilitary():
         if Menu.sair == 1:
             Menu.load = "3." + str(Menu.escolha)
             break
-        label1 = M5TextBox(25, 126, "Increase Spending", lcd.FONT_Default, color[1])
-        label2 = M5TextBox(25, 146, "Decrease Spending", lcd.FONT_Default, color[2])
-        label3 = M5TextBox(25, 166, "Invade Country", lcd.FONT_Default, color[3])
-        label4 = M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
+        M5TextBox(25, 126, "Increase Spending", lcd.FONT_Default, color[1])
+        M5TextBox(25, 146, "Decrease Spending", lcd.FONT_Default, color[2])
+        M5TextBox(25, 166, "Invade Country", lcd.FONT_Default, color[3])
+        M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
         escolher() 
  
 def uploadCloud():
@@ -264,6 +275,15 @@ def uploadCloud():
       global militares
       global identifier
       global turn
+      json_file = open("/flash/lib/SimPor.sav","r")
+      data = ujson.load(json_file)
+      print (gc.mem_free())
+      gravado = data["gravado"]
+      turn = data["voltas"]
+      print (gc.mem_free())
+      portugal=(Pais(data["posicao"], data["populacao"], data["money"], data["militar"], data["natalidade"],data["felicidade"],data["saude"]))
+      militares = militarianos(data["gastos"],data["contentamento"],data["poder"],data["nome"])
+      json_file.close()
       dados = {"identifier" : identifier, "gravado" : 1, "voltas" : turn, "saving":"1"}
       dados.update(portugal.__dict__)
       dados.update(militares.__dict__)
@@ -289,9 +309,14 @@ def downloadCloud():
     'Content-Type': 'application/json',
     'X-MyHeader': '123',}
       response = urequests.post('https://us-central1-plucky-agency-235912.cloudfunctions.net/function-1', headers=headers, data=json)
-      print(response)
-      print(response.text)
       print(response.json())
+      data = response.json()
+      turn = data["voltas"]
+      print (data["gastos"])
+      portugal=(Pais(data["posicao"], data["populacao"], data["money"], data["militar"], data["natalidade"],data["felicidade"],data["saude"]))
+      militares = militarianos(data["gastos"],data["contentamento"],data["poder"], data["nome"])
+      Menu.load = "1.1"
+      Menu.sair = 0
       response.close
       M5TextBox(155, 90, "*LOADED FROM CLOUD*", lcd.FONT_Default, 0xfffc00)
       time.sleep(2)
@@ -324,10 +349,10 @@ def loadOnline():
         time.sleep (3)
         Menu.load = "0.0"
 
-def loadHealth():
+def loadEducation():
     clear_bg(0x222222)
-    title1 = M5Title(title="Health", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd) 
+    title1 = M5Title(title="Education", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
+    label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd)  
     time.sleep(2)
 
 def loadEducation():
@@ -340,23 +365,53 @@ def invadirPais():
     global Menu
     global color
     clear_bg(0x222222)
-    Menu.maximo = 4
+    
     title1 = M5Title(title="War Room - No Fighting", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
     Menu.sair = 0
     Menu.escolha = 1
     clearcolors()
     color[1]=0x0007fd
+    
     while True:
         if Menu.sair == 1:
-            if Menu.escolha == 4:
-                Menu.load = "5." + str(Menu.escolha)
-                break
-            
-        M5TextBox(25, 46, "Invade Andorra", lcd.FONT_Default, color[1])
-        M5TextBox(25, 66, "Invade Spain", lcd.FONT_Default, color[2])
-        M5TextBox(25, 86, "Invade France", lcd.FONT_Default, color[3])
-        M5TextBox(25, 106, "Main Menu", lcd.FONT_Default, color[4])
+            if Menu.escolha == b:
+                Menu.load = "1.1"
+            if Menu.escolha < b:
+                fight(Menu.escolha)
+            break
+        a = 46
+        b = 1
+        for Pais_class in country_list:
+            if Pais_class.destruido == 0:
+             M5TextBox(25, a, "Invade " + str(Pais_class.nome) + ". Power: "+str(Pais_class.militar),lcd.FONT_Default, color[b])
+             a = a + 20
+             b = b +1
+        M5TextBox(25, a, "Main Menu", lcd.FONT_Default, color[b])
+        Menu.maximo = b
         escolher()
+
+def fight(escolha):
+    clear_bg(0x222222)
+    for Pais_class in country_list:
+        if Pais_class.posicao == int(escolha):
+            pais_invadido = Pais_class
+    M5TextBox(25, 46, "You have decided to invade "+ str(pais_invadido.nome), lcd.FONT_Default, 0xff0000)
+    M5TextBox(25, 66, "It's military power is "+str(pais_invadido.militar), lcd.FONT_Default, 0x0007fd)          
+    print (militares.poder)
+    print (pais_invadido.militar)
+    if (militares.poder * 2) < pais_invadido.militar:
+        time.sleep(2)
+        M5TextBox(25, 86, "You are not very smart", lcd.FONT_Default, 0x0007fd)
+        time.sleep(4)
+        clear_bg(0x222222)
+        M5TextBox(25, 66, "YOUR COUNTRY IS DESTROYED", lcd.FONT_DejaVu24, 0x0007fd)
+        M5TextBox(65, 106, "DESTROYED", lcd.FONT_DejaVu24, 0x0007fd)
+        speaker.sing(220, 1)
+        speaker.sing(165, 1)
+        speaker.sing(330, 1/16)
+
+        
+    time.sleep(4)
 
     
 def quitJogo():
@@ -400,6 +455,7 @@ def loadSave():
     json = ujson.dumps(dados)
     f = open('/flash/lib/SimPor.sav', 'w')
     f.write(json)
+    print (gc.mem_free())
     f.close()
     clear_bg(0x222222)
     M5TextBox(65, 106, "GAME SAVED.SHUTTING DOWN", lcd.FONT_Default, 0x0000FF)
@@ -415,7 +471,6 @@ def loadSave():
     M5TextBox(85, 126, ".", lcd.FONT_Default, 0xFFFFFF)
     time.sleep(0.5)
     machine.reset()
-
 
 startMenu()
 while True:
@@ -453,3 +508,6 @@ while True:
         downloadCloud()
     if Menu.load == "5.4":
         novoJogo()
+    if Menu.load == "fight":
+        fight()
+
