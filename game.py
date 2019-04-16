@@ -54,7 +54,7 @@ estatisticas = {
 	"Military Power": portugal.podermilitar
 }
 
-	
+
 
 
 class militarianos(object):
@@ -374,13 +374,6 @@ def loadOnline():
 		M5TextBox(25, 106, "No internet available", lcd.FONT_Default, 0x0000FF)
 		time.sleep(3)
 		Menu.load = "startMenu"
-
-
-def loadEducation():
-	clear_bg(0x222222)
-	title1 = M5Title(title="Education", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
-	label1 = M5TextBox(25, 46, "Load Saved Game", lcd.FONT_Default, 0x0007fd)
-	time.sleep(2)
 
 
 def loadEducation():
