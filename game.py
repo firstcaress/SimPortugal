@@ -40,7 +40,7 @@ class Pais(object):
 		self.gastossaude = 5000
 
 
-portugal = Pais(0, 1000, 250000, 90, 10, 50, 70, "Portugal", 1, 5000,30,1000)
+portugal = Pais(0, 1000, 25000, 0, 10, 50, 70, "Portugal", 1, 5000,30,1000)
 andorra = Pais(1, 10, 10000, 20, 10, 50, 70, "Andorra", 0, 500,15,5000)
 espanha = Pais(2, 9000, 290000, 500, 10, 50, 70, "Spain", 0, 500,15,2500)
 franca = Pais(3, 15000, 500000, 1000, 10, 50, 70, "France", 0, 500,15,3000)
@@ -184,6 +184,7 @@ def endturncalculations():
 	Pais.turn = (Pais.turn - 1)
 	portugal.natalidade = ((portugal.felicidade - 50)/1000)+1
 	portugal.populacao = int(portugal.populacao * portugal.natalidade)
+	portugal.felicidade = portugal.felicidade + 30 - portugal.impostos
 	portugal.money = (portugal.money - portugal.gastosmilitar - portugal.gastoseducacao - portugal.gastossaude + int(portugal.populacao * portugal.impostos * portugal.ordenadomedio)/10000)
 	if portugal.money < 1:
 		clear_bg(0x222222)
@@ -192,33 +193,39 @@ def endturncalculations():
 		M5TextBox(25, 66, "THE FMI SAVES YOU", lcd.FONT_Default, 0x0007fd)
 		time.sleep(2)
 		M5TextBox(25, 86, "BUT PEOPLE ARE UNHAPPY", lcd.FONT_Default, 0x0007fd)
-		machine.reset()
+		portugal.felicidade = portugal.felicidade /3
+		portugal.gastosmilitar = 0
+		Menu.load = "1.1"
+
 	portugal.podermilitar = portugal.podermilitar + (portugal.gastosmilitar / 1000)
 	if Pais.turn == 0:
-		clear_bg(0x222222)
-		displayButtons()
-		M5TextBox(25, 46, "ELECTION TIME!", lcd.FONT_Default, 0xff0000)
-		time.sleep(0.2)
-		M5TextBox(25, 66, "Would you like to commit fraud?", lcd.FONT_Default, 0xFFFFFF)
-		M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0x0007fd)
-		M5TextBox(25, 126, "No", lcd.FONT_Default, 0xFFFFFF)
-		Menu.maximo = 2
-		Menu.sair = 0
-		Menu.escolha = 1
-		while True:
-			escolher()
-			if Menu.sair == 1:
-				if Menu.escolha == 1:
-					M5TextBox(25, 146, "MALANDRO", lcd.FONT_Default, 0x0007fd)
-				if Menu.escolha == 2:
-					M5TextBox(25, 146, "Honest man!", lcd.FONT_Default, 0x0007fd)
+		eleicoes()
 
+def eleicoes():
+	clear_bg(0x222222)
+	displayButtons()
+	M5TextBox(25, 46, "ELECTION TIME!", lcd.FONT_Default, 0xff0000)
+	time.sleep(0.2)
+	M5TextBox(25, 66, "Would you like to commit fraud?", lcd.FONT_Default, 0xFFFFFF)
+	M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0x0007fd)
+	M5TextBox(25, 126, "No", lcd.FONT_Default, 0xFFFFFF)
+	Menu.maximo = 2
+	Menu.sair = 0
+	Menu.escolha = 1
+	while True:
+		escolher()
+		if Menu.sair == 1:
 			if Menu.escolha == 1:
-				M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0x0007fd)
-				M5TextBox(25, 126, "No", lcd.FONT_Default, 0xFFFFFF)
+				M5TextBox(25, 146, "MALANDRO", lcd.FONT_Default, 0x0007fd)
 			if Menu.escolha == 2:
-				M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0xFFFFFF)
-				M5TextBox(25, 126, "No", lcd.FONT_Default, 0x0007fd)
+				M5TextBox(25, 146, "Honest man!", lcd.FONT_Default, 0x0007fd)
+
+		if Menu.escolha == 1:
+			M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0x0007fd)
+			M5TextBox(25, 126, "No", lcd.FONT_Default, 0xFFFFFF)
+		if Menu.escolha == 2:
+			M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0xFFFFFF)
+			M5TextBox(25, 126, "No", lcd.FONT_Default, 0x0007fd)
 
 
 def loadJogo():
@@ -508,6 +515,8 @@ clear_bg(0x222222)
 def loadEconomy():
 	global color
 	clear_bg(0x222222)
+	clearcolors()
+	color[1] = 0x0007fd
 	M5Title(title="MONEY MONEY", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
 	Menu.maximo = 4
 	Menu.sair = 0
@@ -515,13 +524,13 @@ def loadEconomy():
 	while True:
 		if Menu.sair == 1 and Menu.escolha == 1:
 			M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0x222222)
-			portugal.impostos = portugal.impostos + 1000
+			portugal.impostos = portugal.impostos + 1
 			M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0xFFFFFF)
 			Menu.sair = 0
 			continue
 		if Menu.sair == 1 and Menu.escolha == 2:
 			M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0x222222)
-			portugal.impostos = portugal.impostos - 1000
+			portugal.impostos = portugal.impostos - 1
 			if portugal.impostos < 0:
 				portugal.impostos = 0
 			M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0xFFFFFF)
@@ -530,14 +539,13 @@ def loadEconomy():
 		if Menu.sair == 1:
 			Menu.load = "3." + str(Menu.escolha)
 			break
-
-	M5TextBox(25, 26, "Taxes: ", lcd.FONT_Default, 0x0007fd)
-	M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0xFFFFFF)
-	M5TextBox(25, 126, "Increase Taxes", lcd.FONT_Default, color[1])
-	M5TextBox(25, 146, "Decrease Taxes", lcd.FONT_Default, color[2])
-	M5TextBox(25, 166, "Yay", lcd.FONT_Default, color[3])
-	M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
-	escolher()
+		M5TextBox(25, 26, "Taxes: ", lcd.FONT_Default, 0x0007fd)
+		M5TextBox(25, 46, str(portugal.impostos), lcd.FONT_Default, 0xFFFFFF)
+		M5TextBox(25, 126, "Increase Taxes", lcd.FONT_Default, color[1])
+		M5TextBox(25, 146, "Decrease Taxes", lcd.FONT_Default, color[2])
+		M5TextBox(25, 166, "Yay", lcd.FONT_Default, color[3])
+		M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
+		escolher()
 
 
 
