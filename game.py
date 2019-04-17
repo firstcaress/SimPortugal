@@ -9,7 +9,8 @@ import random
 
 global color
 
-color = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF]
+color = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+				 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF]
 
 btnA = M5Button(name="ButtonA", text="ButtonA", visibility=False)
 btnB = M5Button(name="ButtonB", text="ButtonB", visibility=False)
@@ -19,17 +20,17 @@ btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
 class Pais(object):
 	turn = 20
 	identifier = id(machine)
-	version = 0.39
+	version = 0.41
 	idade = 20
 	dinheiro = 0
-    carisma = 0
+	carisma = 0
 	authoritan = 0
 	religious = 0
 	conservative = 0
 	science = 0
 
-
-	def __init__(self, posicao, populacao, money, militarpoder, natalidade, felicidade, saude, nome, destruido, militargastos,impostos,ordenadomedio):
+	def __init__(self, posicao, populacao, money, militarpoder, natalidade, felicidade, saude, nome, destruido,
+							 militargastos, impostos, ordenadomedio):
 		self.posicao = posicao
 		self.populacao = populacao
 		self.money = money
@@ -45,31 +46,26 @@ class Pais(object):
 		self.ordenadomedio = ordenadomedio
 		self.economia = 1
 		self.educacaogastos = 5000
-		self.educao nivel = 0
+		self.educacaonivel = 0
 		self.gastossaude = 5000
 		self.socialreligion = 0
 		self.socialconservative = 50
 		self.socialscience = 0
 
 
-
-portugal = Pais(0, 1000, 25000, 0, 10, 50, 70, "Portugal", 1, 5000,30,1000)
-andorra = Pais(1, 10, 10000, 20, 10, 50, 70, "Andorra", 0, 500,15,5000)
-espanha = Pais(2, 9000, 290000, 500, 10, 50, 70, "Spain", 0, 500,15,2500)
-franca = Pais(3, 15000, 500000, 1000, 10, 50, 70, "France", 0, 500,15,3000)
-missanga = Pais(4, 150000, 500000, 5000, 10, 50, 70, "MissangaLand", 0, 500,15,6000)
+portugal = Pais(0, 1000, 25000, 0, 10, 50, 70, "Portugal", 1, 5000, 30, 1000)
+andorra = Pais(1, 10, 10000, 20, 10, 50, 70, "Andorra", 0, 500, 15, 5000)
+espanha = Pais(2, 9000, 290000, 500, 10, 50, 70, "Spain", 0, 500, 15, 2500)
+franca = Pais(3, 15000, 500000, 1000, 10, 50, 70, "France", 0, 500, 15, 3000)
+missanga = Pais(4, 150000, 500000, 5000, 10, 50, 70, "MissangaLand", 0, 500, 15, 6000)
 
 country_list = [portugal, andorra, espanha, franca, missanga]
 
 estatisticas = {
-	"Population" : portugal.populacao,
-	"Money" : portugal.money,
+	"Population": portugal.populacao,
+	"Money": portugal.money,
 	"Military Power": portugal.militarpoder
 }
-
-
-
-
 
 
 class Menu(object):
@@ -155,6 +151,7 @@ def clearcolors():
 	color[12] = 0xFFFFFF
 	color[13] = 0xFFFFFF
 
+
 def novoJogo():
 	clear_bg(0x222222)
 	M5Title(title="SimPortugal v" + str(Pais.version), fgcolor=0xFFFFFF, bgcolor=0x0000FF)
@@ -183,8 +180,6 @@ def novoJogo():
 		M5TextBox(160, 90, "Economy", lcd.FONT_Default, color[9])
 		M5TextBox(160, 110, "Other Options", lcd.FONT_Default, color[10])
 		escolher()
-
-
 
 
 def loadJogo():
@@ -333,7 +328,7 @@ def loadOnline():
 				break
 			M5TextBox(25, 70, "Upload Save", lcd.FONT_Default, color[1])
 			M5TextBox(25, 90, "Download Save", lcd.FONT_Default, color[2])
-			M5TextBox(25, 110, "Update Game & Restart", lcd.FONT_Default, color[2])
+			M5TextBox(25, 110, "Update Game & Restart", lcd.FONT_Default, color[3])
 			escolher()
 
 	except:
@@ -342,11 +337,12 @@ def loadOnline():
 		time.sleep(3)
 		Menu.load = "startMenu"
 
+
 def updateGame():
 	clear_bg(0x222222)
 	update = urequests.get('https: // raw.githubusercontent.com / firstcaress / SimPortugal / master / game.py')
-	f = open ('game.py','w')
-	f.write (update.content)
+	f = open('game.py', 'w')
+	f.write(update.content)
 
 
 def loadEducation():
@@ -375,7 +371,8 @@ def invadirPais():
 		b = 1
 		for Pais_class in country_list:
 			if Pais_class.destruido == 0:
-				M5TextBox(25, a, "Invade " + str(Pais_class.nome) + ". Power: " + str(Pais_class.militarpoder), lcd.FONT_Default, color[b])
+				M5TextBox(25, a, "Invade " + str(Pais_class.nome) + ". Power: " + str(Pais_class.militarpoder),
+									lcd.FONT_Default, color[b])
 				Pais_class.posicao = b
 				a = a + 20
 				b = b + 1
@@ -417,7 +414,8 @@ def fight(escolha):
 	clear_bg(0x222222)
 	M5TextBox(25, 66, "YOUR COUNTRY IS", lcd.FONT_DejaVu24, 0x0007fd)
 	print((portugal.militarpoder / 1.3) + random.uniform(1, portugal.militarpoder))
-	if ((portugal.militarpoder / 1.3) + random.uniform(1, portugal.militarpoder)) > ((pais_invadido.militarpoder / 1.3) + random.uniform(1, pais_invadido.militarpoder)):
+	if ((portugal.militarpoder / 1.3) + random.uniform(1, portugal.militarpoder)) > (
+					(pais_invadido.militarpoder / 1.3) + random.uniform(1, pais_invadido.militarpoder)):
 		time.sleep(0.5)
 		M5TextBox(86, 106, "VICTORIOUS", lcd.FONT_DejaVu24, 0x0007fd)
 		for Pais_class in country_list:
@@ -426,7 +424,7 @@ def fight(escolha):
 		time.sleep(2)
 		return
 	if ((portugal.militarpoder / 1.3) + random.uniform(1, portugal.militarpoder)) < (
-						(pais_invadido.militarpoder / 1.3) + random.uniform(1, pais_invadido.militarpoder)):
+					(pais_invadido.militarpoder / 1.3) + random.uniform(1, pais_invadido.militarpoder)):
 		time.sleep(0.5)
 		M5TextBox(86, 106, "DEFEATED", lcd.FONT_DejaVu24, 0x0007fd)
 		time.sleep(2)
@@ -467,6 +465,7 @@ def loadCountryData():
 			Menu.load = "loadCountryData2"
 			break
 
+
 def loadCountryData2():
 	if buttonB.isPressed():
 		time.sleep(0.2)
@@ -477,6 +476,7 @@ def loadCountryData2():
 
 
 clear_bg(0x222222)
+
 
 def loadEconomy():
 	global color
@@ -512,7 +512,6 @@ def loadEconomy():
 		M5TextBox(25, 166, "Yay", lcd.FONT_Default, color[3])
 		M5TextBox(25, 186, "Return", lcd.FONT_Default, color[4])
 		escolher()
-
 
 
 def loadSave():
@@ -551,18 +550,19 @@ def otherOptions():
 	while True:
 		a = 46
 		b = 1
-		for k,v in estatisticas.items():
+		for k, v in estatisticas.items():
 			M5TextBox(25, a, str(k), lcd.FONT_Default, color[1])
-			M5TextBox(25, a+20, str(v), lcd.FONT_Default, color[1])
-			a = a +40
+			M5TextBox(25, a + 20, str(v), lcd.FONT_Default, color[1])
+			a = a + 40
 
 
 def endturncalculations():
 	Pais.turn = (Pais.turn - 1)
-	portugal.natalidade = ((portugal.felicidade - 50)/1000)+1
+	portugal.natalidade = ((portugal.felicidade - 50) / 1000) + 1
 	portugal.populacao = int(portugal.populacao * portugal.natalidade)
 	portugal.felicidade = portugal.felicidade + 30 - portugal.impostos
-	portugal.money = (portugal.money - portugal.militargastos - portugal.educacaogastos - portugal.gastossaude + int(portugal.populacao * portugal.impostos * portugal.ordenadomedio)/10000)
+	portugal.money = (portugal.money - portugal.militargastos - portugal.educacaogastos - portugal.gastossaude + int(
+		portugal.populacao * portugal.impostos * portugal.ordenadomedio) / 10000)
 	if portugal.money < 1:
 		clear_bg(0x222222)
 		M5TextBox(25, 46, "YOU ARE BROKE", lcd.FONT_Default, 0x0007fd)
@@ -570,13 +570,14 @@ def endturncalculations():
 		M5TextBox(25, 66, "THE FMI SAVES YOU", lcd.FONT_Default, 0x0007fd)
 		time.sleep(2)
 		M5TextBox(25, 86, "BUT PEOPLE ARE UNHAPPY", lcd.FONT_Default, 0x0007fd)
-		portugal.felicidade = portugal.felicidade /3
+		portugal.felicidade = portugal.felicidade / 3
 		portugal.militargastos = 0
 		Menu.load = "1.1"
 
 	portugal.militarpoder = portugal.militarpoder + (portugal.militargastos / 1000)
 	if Pais.turn == 0:
 		eleicoes()
+
 
 def eleicoes():
 	clear_bg(0x222222)
@@ -603,7 +604,6 @@ def eleicoes():
 		if Menu.escolha == 2:
 			M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0xFFFFFF)
 			M5TextBox(25, 126, "No", lcd.FONT_Default, 0x0007fd)
-
 
 
 startMenu()
@@ -648,7 +648,7 @@ while True:
 	if Menu.load == "fight":
 		fight()
 	if Menu.load == "loadCountryData2":
-				loadCountryData2()
+		loadCountryData2()
 	if Menu.load == "2.10":
 		otherOptions()
 	if Menu.load == "2.9":
