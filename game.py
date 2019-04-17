@@ -1,11 +1,11 @@
 from m5stack import *
 from m5ui import *
 import time
-import os
 import urequests
-import gc
+import os
 import ujson
 import random
+import gc
 
 global color
 
@@ -20,7 +20,7 @@ btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
 class Pais(object):
 	turn = 20
 	identifier = id(machine)
-	version = 0.41
+	version = 0.40
 	idade = 20
 	dinheiro = 0
 	carisma = 0
@@ -45,12 +45,15 @@ class Pais(object):
 		self.impostos = impostos
 		self.ordenadomedio = ordenadomedio
 		self.economia = 1
+		self.economiaagricultura = 1 #created by 
 		self.educacaogastos = 5000
 		self.educacaonivel = 0
 		self.gastossaude = 5000
 		self.socialreligion = 0
 		self.socialconservative = 50
 		self.socialscience = 0
+		self.artinfluence = 0 #created by Ana Lira
+
 
 
 portugal = Pais(0, 1000, 25000, 0, 10, 50, 70, "Portugal", 1, 5000, 30, 1000)
@@ -340,9 +343,15 @@ def loadOnline():
 
 def updateGame():
 	clear_bg(0x222222)
-	update = urequests.get('https: // raw.githubusercontent.com / firstcaress / SimPortugal / master / game.py')
-	f = open('game.py', 'w')
-	f.write(update.content)
+	gc.collect()
+	print(gc.mem_free())
+	response = urequests.get('https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py')
+	newversion = response.text
+	response.close()
+	f = open('gamere.py', 'w')
+	f.write(newversion)
+	f.close()
+	machine.reset()
 
 
 def loadEducation():
