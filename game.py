@@ -19,7 +19,7 @@ btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
 class Pais(object):
 	turn = 20
 	identifier = id(machine)
-	version = 0.38
+	version = 0.39
 	idade = 20
 	dinheiro = 0
     carisma = 0
