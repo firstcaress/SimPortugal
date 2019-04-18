@@ -7,6 +7,7 @@ import ujson
 import random
 import gc
 
+
 global color
 
 color = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
@@ -45,14 +46,14 @@ class Pais(object):
 		self.impostos = impostos
 		self.ordenadomedio = ordenadomedio
 		self.economia = 1
-		self.economiaagricultura = 1 #created by 
+		self.economiaagricultura = 1
 		self.educacaogastos = 5000
 		self.educacaonivel = 0
 		self.gastossaude = 5000
 		self.socialreligion = 0
 		self.socialconservative = 50
 		self.socialscience = 0
-		self.artinfluence = 0 #created by Ana Lira
+		self.artinfluence = 0
 
 
 
@@ -342,16 +343,106 @@ def loadOnline():
 
 
 def updateGame():
+	import usocket
+  url='https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py'
+	def urlopen(url, data=None, method="GET"):
+		if data is not None and method == "GET":
+			method = "POST"
+		try:
+			proto, dummy, host, path = url.split("/", 3)
+		except ValueError:
+			proto, dummy, host = url.split("/", 2)
+			path = ""
+		if proto == "http:":
+			port = 80
+		elif proto == "https:":
+			import ussl
+			port = 443
+		else:
+			raise ValueError("Unsupported protocol: " + proto)
+
+		if ":" in host:
+			host, port = host.split(":", 1)
+			port = int(port)
+
+		ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
+		ai = ai[0]
+
+		s = usocket.socket(ai[0], ai[1], ai[2])
+		try:
+			s.connect(ai[-1])
+			if proto == "https:":
+				s = ussl.wrap_socket(s, server_hostname=host)
+
+			s.write(method)
+			s.write(b" /")
+			s.write(path)
+			s.write(b" HTTP/1.0\r\nHost: ")
+			s.write(host)
+			s.write(b"\r\n")
+
+			if data:
+				s.write(b"Content-Length: ")
+				s.write(str(len(data)))
+				s.write(b"\r\n")
+			s.write(b"\r\n")
+			if data:
+				s.write(data)
+
+			l = s.readline()
+			l = l.split(None, 2)
+			# print(l)
+			status = int(l[1])
+			while True:
+				l = s.readline()
+				if not l or l == b"\r\n":
+					break
+				# print(l)
+				if l.startswith(b"Transfer-Encoding:"):
+					if b"chunked" in l:
+						raise ValueError("Unsupported " + l)
+				elif l.startswith(b"Location:"):
+					raise NotImplementedError("Redirects not yet supported")
+		except OSError:
+			s.close()
+			raise
+
+		return s
+
+
+
+
+
+
+
+
+
+
+
+def none():
 	clear_bg(0x222222)
 	gc.collect()
 	print(gc.mem_free())
-	response = urequests.get('https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py')
-	newversion = response.text
-	response.close()
-	f = open('gamere.py', 'w')
-	f.write(newversion)
-	f.close()
-	machine.reset()
+	url = 'https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py'
+	filename = 'glame.py'
+	r = urequests.get(url, stream=True)
+
+
+#	with open(urequests.get('https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py', stream=True)) as response:
+#		print(str(response.text))
+#	print(gc.mem_free())
+#	response.close
+#	print(gc.mem_free())
+#	with open(response.text,"r") as fileHandler:
+#		for line in fileHandler:
+#			print(line.strip())
+#	response.close
+
+#	response.close()
+#	f = open('gamere.py', 'w')
+#	f.write(newversion)
+#	f.close()
+#	machine.reset()
 
 
 def loadEducation():
