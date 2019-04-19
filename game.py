@@ -1,3 +1,5 @@
+#comecar
+
 from m5stack import *
 from m5ui import *
 import time
@@ -455,46 +457,6 @@ def fight(escolha):
 		return
 
 
-
-def updateGame():
-	import usocket
-	import ussl
-	port = 443
-	path = 'firstcaress/SimPortugal/master/game.py'
-	host = 'raw.githubusercontent.com'
-	proto = 'https:'
-	method = 'GET'
-	ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
-	ai = ai[0]
-	s = usocket.socket(ai[0], ai[1], ai[2])
-	try:
-		s.connect(ai[-1])
-		if proto == "https:":
-			s = ussl.wrap_socket(s, server_hostname=host)
-
-		s.write(method)
-		s.write(b" /")
-		s.write(path)
-		s.write(b" HTTP/1.0\r\nHost: ")
-		s.write(host)
-		s.write(b"\r\n")
-		s.write(b"\r\n")
-		l = s.readline()
-		l = l.split(None, 2)
-		status = int(l[1])
-		while True:
-			l = s.readline()
-			m = l.decode('utf-8')[:-2]
-			if m == "#acabar aqui":
-				print("End Of File")
-				break
-			print(m)
-	#if not l:#or l == b"\r\n":
-	#	break
-	except:
-		print('error')
-		Menu.load = "1.1"
-
 def quitJogo():
 	clear_bg(0x222222)
 	M5Title(title="Welcome to SimPortugal v" + str(Pais.version), fgcolor=0xFFFFFF, bgcolor=0x0000FF)
@@ -668,6 +630,57 @@ def eleicoes():
 		if Menu.escolha == 2:
 			M5TextBox(25, 106, "Yes", lcd.FONT_Default, 0xFFFFFF)
 			M5TextBox(25, 126, "No", lcd.FONT_Default, 0x0007fd)
+
+def updateGame():
+	import usocket
+	import ussl
+	port = 443
+	path = 'firstcaress/SimPortugal/master/game.py'
+	host = 'raw.githubusercontent.com'
+	proto = 'https:'
+	method = 'GET'
+	ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
+	ai = ai[0]
+	s = usocket.socket(ai[0], ai[1], ai[2])
+	try:
+		s.connect(ai[-1])
+		if proto == "https:":
+			s = ussl.wrap_socket(s, server_hostname=host)
+
+		s.write(method)
+		s.write(b" /")
+		s.write(path)
+		s.write(b" HTTP/1.0\r\nHost: ")
+		s.write(host)
+		s.write(b"\r\n")
+		s.write(b"\r\n")
+		l = s.readline()
+		l = l.split(None, 2)
+		status = int(l[1])
+    actualizar = open('pilas','w')
+    while True:
+			l = s.readline()
+#			l = l.replace("\n\n", "\n")
+			m = l.decode('utf-8')[:-2]
+      if str(m) == "#comecar":
+        a = 1
+      if a = 1:
+        actualizar.writw(m)
+			if str(m) == "#acabar aq":
+				print("End Of File")
+        Menu.load = "1.1"
+        actualizar.close()
+				break
+			print(m)
+	except:
+		print('error')
+		Menu.load = "1.1"
+
+
+
+
+
+
 
 
 startMenu()
