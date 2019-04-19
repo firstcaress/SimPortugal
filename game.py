@@ -22,7 +22,7 @@ btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
 class Pais(object):
 	turn = 20
 	identifier = id(machine)
-	version = 0.40
+	version = 0.50
 	idade = 20
 	dinheiro = 0
 	carisma = 0
@@ -344,33 +344,6 @@ def loadOnline():
 
 
 
-
-def apagaristo():
-	clear_bg(0x222222)
-	gc.collect()
-	print(gc.mem_free())
-	url = 'https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py'
-	filename = 'glame.py'
-	r = urequests.get(url, stream=True)
-
-
-#	with open(urequests.get('https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py', stream=True)) as response:
-#		print(str(response.text))
-#	print(gc.mem_free())
-#	response.close
-#	print(gc.mem_free())
-#	with open(response.text,"r") as fileHandler:
-#		for line in fileHandler:
-#			print(line.strip())
-#	response.close
-
-#	response.close()
-#	f = open('gamere.py', 'w')
-#	f.write(newversion)
-#	f.close()
-#	machine.reset()
-
-
 def loadEducation():
 	clear_bg(0x222222)
 	title1 = M5Title(title="Education", fgcolor=0xFFFFFF, bgcolor=0x0000FF)
@@ -643,6 +616,7 @@ def updateGame():
 	ai = ai[0]
 	s = usocket.socket(ai[0], ai[1], ai[2])
 	try:
+		antonio = 3
 		s.connect(ai[-1])
 		if proto == "https:":
 			s = ussl.wrap_socket(s, server_hostname=host)
@@ -657,20 +631,20 @@ def updateGame():
 		l = s.readline()
 		l = l.split(None, 2)
 		status = int(l[1])
-    actualizar = open('pilas','w')
-    while True:
+		actualizar = open('/flash/lib/relative.py','w')
+		while True:
 			l = s.readline()
-#			l = l.replace("\n\n", "\n")
 			m = l.decode('utf-8')[:-2]
-      if str(m) == "#comecar":
-        a = 1
-      if a = 1:
-        actualizar.writw(m)
-			if str(m) == "#acabar aq":
+
+			if str(m) == "#comecar":
+				antonio = 5
+			if str(m) == "#acabar aqui":
 				print("End Of File")
-        Menu.load = "1.1"
-        actualizar.close()
+				Menu.load = "1.1"
+				actualizar.close()
 				break
+			if antonio == 5:
+				actualizar.write(m + '\n')
 			print(m)
 	except:
 		print('error')
@@ -684,6 +658,7 @@ def updateGame():
 
 
 startMenu()
+
 while True:
 	print(gc.mem_free())
 	if Menu.load == "startMenu":
