@@ -22,7 +22,7 @@ btnC = M5Button(name="ButtonC", text="ButtonC", visibility=False)
 class Pais(object):
 	turn = 20
 	identifier = id(machine)
-	version = 0.50
+	version = 0.55
 	idade = 20
 	dinheiro = 0
 	carisma = 0
@@ -631,7 +631,7 @@ def updateGame():
 		l = s.readline()
 		l = l.split(None, 2)
 		status = int(l[1])
-		actualizar = open('/flash/lib/relative.py','w')
+		actualizar = open('/flash/apps/relative.py','w')
 		while True:
 			l = s.readline()
 			m = l.decode('utf-8')[:-2]
@@ -642,6 +642,7 @@ def updateGame():
 				print("End Of File")
 				Menu.load = "1.1"
 				actualizar.close()
+				machine.reset()
 				break
 			if antonio == 5:
 				actualizar.write(m + '\n')
