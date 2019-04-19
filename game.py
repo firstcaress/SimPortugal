@@ -7,7 +7,6 @@ import ujson
 import random
 import gc
 
-
 global color
 
 color = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
@@ -46,14 +45,14 @@ class Pais(object):
 		self.impostos = impostos
 		self.ordenadomedio = ordenadomedio
 		self.economia = 1
-		self.economiaagricultura = 1
+		self.economiaagricultura = 1 #created by 
 		self.educacaogastos = 5000
 		self.educacaonivel = 0
 		self.gastossaude = 5000
 		self.socialreligion = 0
 		self.socialconservative = 50
 		self.socialscience = 0
-		self.artinfluence = 0
+		self.artinfluence = 0 #created by Ana Lira
 
 
 
@@ -98,7 +97,7 @@ def startMenu():
 	clear_bg(0x222222)
 	M5Title(title="Welcome to SimPortugal v" + str(Pais.version), fgcolor=0xFFFFFF, bgcolor=0x0000FF)
 	displayButtons()
-	Menu.maximo = 5
+	Menu.maximo = 4
 	Menu.sair = 0
 	Menu.escolha = 1
 	clearcolors()
@@ -342,84 +341,9 @@ def loadOnline():
 		Menu.load = "startMenu"
 
 
-def updateGame():
-	import usocket
-  url='https://raw.githubusercontent.com/firstcaress/SimPortugal/master/game.py'
-	def urlopen(url, data=None, method="GET"):
-		if data is not None and method == "GET":
-			method = "POST"
-		try:
-			proto, dummy, host, path = url.split("/", 3)
-		except ValueError:
-			proto, dummy, host = url.split("/", 2)
-			path = ""
-		if proto == "http:":
-			port = 80
-		elif proto == "https:":
-			import ussl
-			port = 443
-		else:
-			raise ValueError("Unsupported protocol: " + proto)
-
-		if ":" in host:
-			host, port = host.split(":", 1)
-			port = int(port)
-
-		ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
-		ai = ai[0]
-
-		s = usocket.socket(ai[0], ai[1], ai[2])
-		try:
-			s.connect(ai[-1])
-			if proto == "https:":
-				s = ussl.wrap_socket(s, server_hostname=host)
-
-			s.write(method)
-			s.write(b" /")
-			s.write(path)
-			s.write(b" HTTP/1.0\r\nHost: ")
-			s.write(host)
-			s.write(b"\r\n")
-
-			if data:
-				s.write(b"Content-Length: ")
-				s.write(str(len(data)))
-				s.write(b"\r\n")
-			s.write(b"\r\n")
-			if data:
-				s.write(data)
-
-			l = s.readline()
-			l = l.split(None, 2)
-			# print(l)
-			status = int(l[1])
-			while True:
-				l = s.readline()
-				if not l or l == b"\r\n":
-					break
-				# print(l)
-				if l.startswith(b"Transfer-Encoding:"):
-					if b"chunked" in l:
-						raise ValueError("Unsupported " + l)
-				elif l.startswith(b"Location:"):
-					raise NotImplementedError("Redirects not yet supported")
-		except OSError:
-			s.close()
-			raise
-
-		return s
 
 
-
-
-
-
-
-
-
-
-
-def none():
+def apagaristo():
 	clear_bg(0x222222)
 	gc.collect()
 	print(gc.mem_free())
@@ -530,6 +454,46 @@ def fight(escolha):
 		time.sleep(2)
 		return
 
+
+
+def updateGame():
+	import usocket
+	import ussl
+	port = 443
+	path = 'firstcaress/SimPortugal/master/game.py'
+	host = 'raw.githubusercontent.com'
+	proto = 'https:'
+	method = 'GET'
+	ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
+	ai = ai[0]
+	s = usocket.socket(ai[0], ai[1], ai[2])
+	try:
+		s.connect(ai[-1])
+		if proto == "https:":
+			s = ussl.wrap_socket(s, server_hostname=host)
+
+		s.write(method)
+		s.write(b" /")
+		s.write(path)
+		s.write(b" HTTP/1.0\r\nHost: ")
+		s.write(host)
+		s.write(b"\r\n")
+		s.write(b"\r\n")
+		l = s.readline()
+		l = l.split(None, 2)
+		status = int(l[1])
+		while True:
+			l = s.readline()
+			m = l.decode('utf-8')[:-2]
+			if m == "#acabar aqui":
+				print("End Of File")
+				break
+			print(m)
+	#if not l:#or l == b"\r\n":
+	#	break
+	except:
+		print('error')
+		Menu.load = "1.1"
 
 def quitJogo():
 	clear_bg(0x222222)
@@ -753,3 +717,5 @@ while True:
 		otherOptions()
 	if Menu.load == "2.9":
 		loadEconomy()
+
+#acabar aqui
