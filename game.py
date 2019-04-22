@@ -631,7 +631,7 @@ def updateGame():
 		l = s.readline()
 		l = l.split(None, 2)
 		status = int(l[1])
-		actualizar = open('/flash/apps/relative.py','w')
+		actualizar = open('/flash/game.py','w')
 		while True:
 			l = s.readline()
 			m = l.decode('utf-8')[:-2]
